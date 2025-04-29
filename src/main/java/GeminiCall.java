@@ -2,6 +2,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -12,7 +13,7 @@ public class GeminiCall {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public void send(String prompt) throws IOException {
+    public void send(String prompt, String className) throws IOException {
 
         URL url = new URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=AIzaSyAJl_pMMjxaUhYnbhS9c9ijtGAMQwQC8S4");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -53,19 +54,27 @@ public class GeminiCall {
         JSONArray candidates = fullJson.getJSONArray("candidates");
         JSONObject content = candidates.getJSONObject(0).getJSONObject("content");
         JSONArray parts = content.getJSONArray("parts");
-        String resultText = parts.getJSONObject(0).getString("text");
+        String resultText = parts.getJSONObject(0).getString("text").trim();
 
         // Create output
+        JSONObject existingOutput = new JSONObject();
+        File outputFile = new File("output.json");
+        if (outputFile.exists()) {
+            try (FileReader reader = new FileReader(outputFile)) {
+                existingOutput = new JSONObject(new JSONTokener(reader));
+            } catch (Exception e) {
+                System.err.println("Failed to parse existing output.json. Starting fresh.");
+            }
+        }
+
         JSONObject resultWrapper = new JSONObject();
-        resultWrapper.put("result", resultText.trim());
+        resultWrapper.put("result", resultText);
+        existingOutput.put(className, resultWrapper);
 
-        JSONObject output = new JSONObject();
-        output.put("Application.java", resultWrapper);
-
-        try (FileWriter file = new FileWriter("output.json")) {
-            file.write(output.toString(2)); // Pretty print with indentation
-            System.out.println("Written to output.json:");
-            System.out.println(output.toString(2));
+        try (FileWriter writer = new FileWriter(outputFile)) {
+            writer.write(existingOutput.toString(2));
+            System.out.println("Updated output.json:");
+            System.out.println(existingOutput.toString(2));
         }
 
 
