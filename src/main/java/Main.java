@@ -13,9 +13,9 @@ public class Main {
 
         GeminiCall geminiCall = new GeminiCall();
         try {
-            String result = geminiCall.send("What is 4+4?");
+            geminiCall.send("What is 4+4?");
             // prints just: 4 + 4 = 8
-            System.out.println(result);
+//            System.out.println(result);
         } catch (IOException e) {
             e.printStackTrace();
         }

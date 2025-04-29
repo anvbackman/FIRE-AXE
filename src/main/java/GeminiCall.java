@@ -1,9 +1,9 @@
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -12,7 +12,7 @@ public class GeminiCall {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public String send(String prompt) throws IOException {
+    public void send(String prompt) throws IOException {
 
         URL url = new URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=AIzaSyAJl_pMMjxaUhYnbhS9c9ijtGAMQwQC8S4");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -39,24 +39,35 @@ public class GeminiCall {
         }
 
         // --- read full JSON response into a string ---
-        StringBuilder full = new StringBuilder();
+        StringBuilder response = new StringBuilder();
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
             String line;
             while ((line = br.readLine()) != null) {
-                full.append(line);
+                response.append(line.trim());
             }
         }
 
-        // --- parse JSON and extract only the model’s text ---
-        JsonNode root = mapper.readTree(full.toString());
-        JsonNode parts = root
-                .path("candidates")
-                .get(0)
-                .path("content")
-                .path("parts");
-        String text = parts.get(0).path("text").asText();
+        // Parse the JSON response
+        JSONObject fullJson = new JSONObject(response.toString());
+        JSONArray candidates = fullJson.getJSONArray("candidates");
+        JSONObject content = candidates.getJSONObject(0).getJSONObject("content");
+        JSONArray parts = content.getJSONArray("parts");
+        String resultText = parts.getJSONObject(0).getString("text");
 
-        return text;
+        // Create output
+        JSONObject resultWrapper = new JSONObject();
+        resultWrapper.put("result", resultText.trim());
+
+        JSONObject output = new JSONObject();
+        output.put("Application.java", resultWrapper);
+
+        try (FileWriter file = new FileWriter("output.json")) {
+            file.write(output.toString(2)); // Pretty print with indentation
+            System.out.println("Written to output.json:");
+            System.out.println(output.toString(2));
+        }
+
+
     }
 }
