@@ -7,11 +7,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class CustomFileWriter {
+public class JsonOutputWriter {
 
-//    private String texti;
-
-    public void writeFile(String fileName, String className, StringBuilder response) throws IOException {
+    public void writeFile(String fileName, String className, String response) throws IOException {
         // Parse the JSON response
         JSONObject fullJson = new JSONObject(response.toString());
         JSONArray candidates = fullJson.getJSONArray("candidates");

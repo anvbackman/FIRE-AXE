@@ -13,7 +13,7 @@ public class Main {
 
         GeminiCall geminiCall = new GeminiCall();
         try {
-            geminiCall.send("What is 5+5?", "Application3.java");
+            geminiCall.send("What is 8*8", "Application4.java");
             // prints just: 4 + 4 = 8
 //            System.out.println(result);
         } catch (IOException e) {

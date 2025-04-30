@@ -1,9 +1,4 @@
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -39,7 +34,7 @@ public class GeminiCall {
             os.write(inputJson.getBytes(StandardCharsets.UTF_8));
         }
 
-        // --- read full JSON response into a string ---
+        // read full JSON response into a string
         StringBuilder response = new StringBuilder();
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
@@ -49,34 +44,8 @@ public class GeminiCall {
             }
         }
 
-        CustomFileWriter fileWriter = new CustomFileWriter();
-        fileWriter.writeFile("gemini-results.json", className, response);
-        // Parse the JSON response
-//        JSONObject fullJson = new JSONObject(response.toString());
-//        JSONArray candidates = fullJson.getJSONArray("candidates");
-//        JSONObject content = candidates.getJSONObject(0).getJSONObject("content");
-//        JSONArray parts = content.getJSONArray("parts");
-//        String resultText = parts.getJSONObject(0).getString("text").trim();
-//
-//        // Create output
-//        JSONObject existingOutput = new JSONObject();
-//        File outputFile = new File("output.json");
-//        if (outputFile.exists()) {
-//            try (FileReader reader = new FileReader(outputFile)) {
-//                existingOutput = new JSONObject(new JSONTokener(reader));
-//            } catch (Exception e) {
-//                System.err.println("Failed to parse existing output.json. Starting fresh.");
-//            }
-//        }
-//
-//        JSONObject resultWrapper = new JSONObject();
-//        resultWrapper.put("result", resultText);
-//        existingOutput.put(className, resultWrapper);
-//
-//        try (FileWriter writer = new FileWriter(outputFile)) {
-//            writer.write(existingOutput.toString(2));
-//            System.out.println("Updated output.json:");
-//            System.out.println(existingOutput.toString(2));
-//        }
+        JsonOutputWriter fileWriter = new JsonOutputWriter();
+        fileWriter.writeFile("gemini-results.json", className, response.toString());
+
     }
 }
