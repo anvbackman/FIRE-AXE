@@ -1,21 +1,15 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
 
         GeminiCall geminiCall = new GeminiCall();
+        String filePath = "Code.txt";
         try {
-            geminiCall.send("What is 8*8", "Application4.java");
-            // prints just: 4 + 4 = 8
-//            System.out.println(result);
+            geminiCall.send(filePath, "Application12.java"); // Pass the file path and class name
         } catch (IOException e) {
             e.printStackTrace();
         }
