@@ -6,17 +6,30 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class GeminiCall {
+public class GeminiCall implements LLMCall {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public void send(String filePath, String className) throws IOException {
+    public void send(String filePath, String className, String taskType) throws IOException {
 
         // Read file content as a String
         String code = new String(Files.readAllBytes(Paths.get(filePath)), StandardCharsets.UTF_8);
 //        String instruction = "Refactor the following legacy Java class to remove all unnecessary inline method wrappers. These include methods that simply return a field or delegate directly to another method without adding logic. Do not change the class's functionality. For each refactoring, respond in this format: [Original Method] → [Refactored Method]. Do not send the whole class.";
-        String instruction = "Refactor the following legacy Java class to remove all unnecessary hardcoded values. Do not change the class's functionality. For each refactoring, respond in this format: [Original Method] → [Refactored Method]. Do not send the whole class.";
+        String instruction = "";
 
+        if (taskType.equals("inline")) {
+            instruction = "Refactor the following legacy Java class to remove all unnecessary inline method wrappers. "
+                    + "These include methods that simply return a field or delegate directly to another method without adding logic. "
+                    + "Do not change the class's functionality. For each refactoring, respond in this format: [Original Method] → [Refactored Method]. Do not send the whole class.";
+
+        }
+
+        else if (taskType.equals("hardcode")) {
+            instruction = "Refactor the following legacy Java class to remove all unnecessary hardcoded values. "
+                    + "These include methods that simply return a field or delegate directly to another method without adding logic. "
+                    + "Do not change the class's functionality. For each refactoring, respond in this format: [Original Method] → [Refactored Method]. Do not send the whole class.";
+
+        }
         String fullText = instruction + code;
 
         // Escape the code content properly for JSON
@@ -65,7 +78,7 @@ public class GeminiCall {
             }
             System.out.println("Response: " + response.toString());
             JsonOutputWriter fileWriter = new JsonOutputWriter();
-            fileWriter.writeFile("gemini-results.json", className, response.toString());
+            fileWriter.writeFile("gemini-results.json", className, response.toString(), taskType);
         } else {
             // Handle non-OK response
             System.out.println("Error: HTTP " + statusCode);

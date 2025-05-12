@@ -8,19 +8,30 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class LlamaCall {
+public class LlamaCall implements LLMCall {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public void send(String filePath, String className) throws IOException {
+    public void send(String filePath, String className, String taskType) throws IOException {
 
         // Read file content as a String
         String code = new String(Files.readAllBytes(Paths.get(filePath)), StandardCharsets.UTF_8);
 
-        // Instruction similar to GeminiCall
-        String instruction = "Refactor the following legacy Java class to remove all unnecessary inline method wrappers. "
-                + "These include methods that simply return a field or delegate directly to another method without adding logic. "
-                + "Do not change the class's functionality. For each refactoring, respond in this format: [Original Method] → [Refactored Method]. Do not send the whole class.";
+        String instruction = "";
+
+        if (taskType.equals("inline")) {
+            instruction = "Refactor the following legacy Java class to remove all unnecessary inline method wrappers. "
+                    + "These include methods that simply return a field or delegate directly to another method without adding logic. "
+                    + "Do not change the class's functionality. For each refactoring, respond in this format: [Original Method] → [Refactored Method]. Do not send the whole class.";
+
+        }
+
+        else if (taskType.equals("hardcode")) {
+            instruction = "Refactor the following legacy Java class to remove all unnecessary hardcoded values. "
+                    + "These include methods that simply return a field or delegate directly to another method without adding logic. "
+                    + "Do not change the class's functionality. For each refactoring, respond in this format: [Original Method] → [Refactored Method]. Do not send the whole class.";
+
+        }
 
         String fullPrompt = instruction + "\n\n" + code;
 
@@ -61,7 +72,7 @@ public class LlamaCall {
 
         // Save to file
         JsonOutputWriter fileWriter = new JsonOutputWriter();
-        fileWriter.writeFile("llama-results.json", className, result);
+        fileWriter.writeFile("llama-results.json", className, result, taskType);
     }
 
     private String escapeJsonString(String input) {

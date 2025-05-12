@@ -9,18 +9,30 @@ import java.io.IOException;
 
 public class JsonOutputWriter {
 
-    public void writeFile(String fileName, String className, String response) throws IOException {
-        // Parse the Gemini API response
-        JSONObject fullJson = new JSONObject(response);
-        JSONArray candidates = fullJson.getJSONArray("candidates");
-        JSONObject content = candidates.getJSONObject(0).getJSONObject("content");
-        JSONArray parts = content.getJSONArray("parts");
-        String rawText = parts.getJSONObject(0).getString("text").trim();
-        String resultText = unescapeJsonString(rawText);
+    public void writeFile(String fileName, String className, String response, String taskType) throws IOException {
+        String resultText;
 
-        // Read existing output file (if exists)
-        JSONObject existingOutput = new JSONObject();
+        // Gemini-style JSON
+        if (response.trim().startsWith("{")) {
+            JSONObject fullJson = new JSONObject(response);
+            if (fullJson.has("candidates")) {
+                JSONArray candidates = fullJson.getJSONArray("candidates");
+                JSONObject content = candidates.getJSONObject(0).getJSONObject("content");
+                JSONArray parts = content.getJSONArray("parts");
+                resultText = parts.getJSONObject(0).getString("text").trim();
+            } else {
+                resultText = fullJson.optString("response", "No response").trim(); // fallback for LLaMA
+            }
+        } else {
+            resultText = response.trim(); // raw string for LLaMA
+        }
+
+        resultText = unescapeJsonString(resultText);
+
+        // Load existing file
         File outputFile = new File(fileName);
+        JSONObject existingOutput = new JSONObject();
+
         if (outputFile.exists()) {
             try (FileReader reader = new FileReader(outputFile)) {
                 existingOutput = new JSONObject(new JSONTokener(reader));
@@ -29,13 +41,19 @@ public class JsonOutputWriter {
             }
         }
 
-        // Wrap the result text into an array of lines (each max 100 chars)
+        // Wrap into shorter lines
         JSONArray wrappedLines = wrapTextAsArray(resultText, 100);
-
-        // Add/Update the result in the output JSON
         JSONObject resultWrapper = new JSONObject();
         resultWrapper.put("result", wrappedLines);
-        existingOutput.put(className, resultWrapper);
+
+        // Insert under taskType and className
+        JSONObject taskSection = existingOutput.optJSONObject(taskType);
+        if (taskSection == null) {
+            taskSection = new JSONObject();
+        }
+
+        taskSection.put(className, resultWrapper);
+        existingOutput.put(taskType, taskSection);
 
         // Write updated JSON to file
         try (FileWriter writer = new FileWriter(outputFile)) {
