@@ -1,0 +1,24 @@
+{
+  "Application24.java": {"result": [
+    "`getPropertySpaces()` → Make `affectedTableSpaces` public and access it directly.\n\n`getBeforeTransac",
+    "tionCompletionProcess()` →  Remove the method as it always returns null and doesn't affect functiona",
+    "lity."
+  ]},
+  "Application26.java": {"result": [
+    "* **[Original Method]** `public double applyDiscount(double price) { return price * 0.90; }`\n   → **",
+    "[Refactored Method]**\n\n```java\n    private static final double DISCOUNT_RATE = 0.90;\n\n    public dou",
+    "ble applyDiscount(double price) {\n        return price * DISCOUNT_RATE;\n    }\n```\n\n* **[Original Met",
+    "hod]** `public void runTask() { try { Thread.sleep(5000); // wait 5 seconds } catch (InterruptedExce",
+    "ption e) { e.printStackTrace(); } }`\n   → **[Refactored Method]**\n\n```java\n    private static final ",
+    "long SLEEP_DURATION_MS = 5000;\n\n    public void runTask() {\n        try {\n            Thread.sleep(S",
+    "LEEP_DURATION_MS);\n        } catch (InterruptedException e) {\n            e.printStackTrace();\n     ",
+    "   }\n    }\n```"
+  ]},
+  "Application25.java": {"result": [
+    "`public void disconnected(ConnectionEvent e) {}` → *removed entirely* as it's empty.\n\n`private stati",
+    "c void usage() {\n\tSystem.out.println(\n    \"usage: java transport \"<to1>[, <to2>]*\" <from> <smtp> tru",
+    "e|false\");\n\tSystem.out.println(\n    \"example: java transport \"joe@machine, jane\" senderaddr smtphost",
+    " false\");\n    }` →  *No changes needed*. This method has logic (printing to console). Although simpl",
+    "e, it's not just a wrapper."
+  ]}
+}
