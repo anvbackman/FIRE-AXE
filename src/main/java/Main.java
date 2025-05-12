@@ -7,9 +7,9 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         GeminiCall geminiCall = new GeminiCall();
-        String filePath = "Code.txt";
+        String filePath = "Code2.txt";
         try {
-            geminiCall.send(filePath, "Application12.java"); // Pass the file path and class name
+            geminiCall.send(filePath, "Application26.java"); // Pass the file path and class name
         } catch (IOException e) {
             e.printStackTrace();
         }
