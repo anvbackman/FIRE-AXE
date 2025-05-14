@@ -18,18 +18,33 @@ public class GeminiCall implements LLMCall {
         String instruction = "";
 
         if (taskType.equals("inline")) {
-            instruction = "Refactor the following legacy Java class to remove all unnecessary inline method wrappers. "
+            instruction = "Imagine you are a developer responsible for updating the following legacy code to remove all unnecessary inline method wrappers. "
                     + "These include methods that simply return a field or delegate directly to another method without adding logic. "
-                    + "Do not change the class's functionality. For each refactoring, respond in this format: [Original Method] → [Refactored Method]. Do not send the whole class.";
+                    + "Do not change the class's functionality. For each refactoring, respond in this format: [Original Method] → [Refactored Method]. " +
+                    "Do not send the whole class.";
 
         }
 
         else if (taskType.equals("hardcode")) {
-            instruction = "Refactor the following legacy Java class to remove all unnecessary hardcoded values. "
+            instruction = "Consider you are responsible for a team responsible to alter the following legacy code to remove all unnecessary hardcoded values. "
                     + "These include methods that simply return a field or delegate directly to another method without adding logic. "
-                    + "Do not change the class's functionality. For each refactoring, respond in this format: [Original Method] → [Refactored Method]. Do not send the whole class.";
-
+                    + "Do not change the class's functionality. For each refactoring, respond in this format: [Original Method] → [Refactored Method]. " +
+                    "Do not send the whole class.";
         }
+
+//        if (taskType.equals("inline")) {
+//            instruction = "Refactor the following legacy Java class to remove all unnecessary inline method wrappers. "
+//                    + "These include methods that simply return a field or delegate directly to another method without adding logic. "
+//                    + "Do not change the class's functionality. For each refactoring, respond in this format: [Original Method] → [Refactored Method]. Do not send the whole class.";
+//
+//        }
+//
+//        else if (taskType.equals("hardcode")) {
+//            instruction = "Refactor the following legacy Java class to remove all unnecessary hardcoded values. "
+//                    + "These include methods that simply return a field or delegate directly to another method without adding logic. "
+//                    + "Do not change the class's functionality. For each refactoring, respond in this format: [Original Method] → [Refactored Method]. Do not send the whole class.";
+//
+//        }
         String fullText = instruction + code;
 
         // Escape the code content properly for JSON

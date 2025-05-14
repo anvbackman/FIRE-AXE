@@ -12,6 +12,12 @@ public class ProcessFiles {
             if (file.isFile() && file.getName().endsWith(".txt")) {
                 String className = file.getName().replace(".txt", ".java");
                 call.send(file.getAbsolutePath(), className, taskType);
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
     }
