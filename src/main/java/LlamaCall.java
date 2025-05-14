@@ -46,6 +46,7 @@ public class LlamaCall implements LLMCall {
         conn.setRequestProperty("Content-Type", "application/json");
         conn.setDoOutput(true);
 
+        // :7b-q4_0
         // JSON body
         String inputJson = """
         {
