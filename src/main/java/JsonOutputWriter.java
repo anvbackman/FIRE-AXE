@@ -58,7 +58,6 @@ public class JsonOutputWriter {
         // Write updated JSON to file
         try (FileWriter writer = new FileWriter(outputFile)) {
             writer.write(existingOutput.toString(2));  // pretty print with indent
-            System.out.println("Updated output.json:");
             System.out.println(existingOutput.toString(2));
         }
     }
