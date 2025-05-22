@@ -14,7 +14,6 @@ public class GeminiCall implements LLMCall {
 
         // Read file content as a String
         String code = new String(Files.readAllBytes(Paths.get(filePath)), StandardCharsets.UTF_8);
-//        String instruction = "Refactor the following legacy Java class to remove all unnecessary inline method wrappers. These include methods that simply return a field or delegate directly to another method without adding logic. Do not change the class's functionality. For each refactoring, respond in this format: [Original Method] → [Refactored Method]. Do not send the whole class.";
         String instruction = "";
 
         if (taskType.equals("inline")) {
@@ -45,13 +44,13 @@ public class GeminiCall implements LLMCall {
 //                    + "Do not change the class's functionality. For each refactoring, respond in this format: [Original Method] → [Refactored Method]. Do not send the whole class.";
 //
 //        }
-        String fullText = instruction + code;
+        String fullText = instruction;
 
         // Escape the code content properly for JSON
         String escapedCode = escapeJsonString(fullText);
 
         // Prepare API URL
-        URL url = new URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=AIzaSyAJl_pMMjxaUhYnbhS9c9ijtGAMQwQC8S4");
+        URL url = new URL("REPLACE WITH URL AND KEY");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/json");
